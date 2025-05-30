@@ -1,0 +1,10 @@
+package main
+
+import (
+	"net"
+)
+
+type Client struct {
+	conn net.Conn
+	name string
+}
