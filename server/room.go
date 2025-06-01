@@ -39,8 +39,8 @@ func (room *Room) BroadcastMessage(m Message) {
 	room.mutex.Lock()
 	defer room.mutex.Unlock()
 	for name, client := range room.clients {
-		if name != m.name {
-			client.outgoing <- m
+		if name != m.Name {
+			client.send <- m
 		}
 	}
 }
