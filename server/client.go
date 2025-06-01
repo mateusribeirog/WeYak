@@ -67,7 +67,7 @@ func (c *Client) readFromClient() {
 func (c *Client) sendToClient() {
 	defer c.Disconnect()
 	for msg := range c.send {
-		formattedMsg := formatMessage(msg)
+		formattedMsg := FormatMessage(msg)
 		_, err := c.conn.Write([]byte(formattedMsg))
 		if err != nil {
 			fmt.Println(err)
