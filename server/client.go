@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-const bufferSize = 256
+const bufferSize = 1024
 
 type Client struct {
 	conn      net.Conn
@@ -37,7 +37,6 @@ func (c *Client) Disconnect() {
 		return
 	}
 	c.connected = false
-	close(c.send)
 	c.conn.Close()
 	if c.name != "" {
 		c.hub.unregister <- c
@@ -80,29 +79,11 @@ func HandleConnection(conn net.Conn, h *Hub) {
 
 	client := newClient(conn, h)
 
-	_, err := client.conn.Write([]byte("Welcome to WeYak, please enter your name: "))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	defer client.Disconnect()
 
 	reader := bufio.NewReader(client.conn)
 	username, err := reader.ReadString('\n')
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	_, err = client.conn.Write([]byte("What room do you wanna join: "))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	rooms := h.ListRooms()
-	roomList := strings.Join(rooms, "\n")
-	_, err = client.conn.Write([]byte(roomList))
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -117,7 +98,7 @@ func HandleConnection(conn net.Conn, h *Hub) {
 	regRequest := &RegistrationInfo{
 		client:          client,
 		desiredRoomName: strings.TrimSpace(desiredroom),
-		name:            username,
+		name:            strings.TrimSpace(username),
 	}
 	h.register <- regRequest
 

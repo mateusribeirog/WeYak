@@ -38,8 +38,8 @@ func (room *Room) RemoveClient(name string) {
 func (room *Room) BroadcastMessage(m Message) {
 	room.mutex.Lock()
 	defer room.mutex.Unlock()
-	for name, client := range room.clients {
-		if name != m.Name {
+	for _, client := range room.clients {
+		if client.connected {
 			client.send <- m
 		}
 	}

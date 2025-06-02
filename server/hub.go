@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"sync"
 )
 
 type Hub struct {
@@ -10,7 +9,6 @@ type Hub struct {
 	register   chan *RegistrationInfo
 	unregister chan *Client
 	broadcast  chan Message
-	roomsMutex sync.RWMutex
 }
 
 type RegistrationInfo struct {
@@ -23,7 +21,9 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case regInfo := <-h.register:
+
 			regInfo.client.name = regInfo.name
+
 			room, exists := h.rooms[regInfo.desiredRoomName]
 			if !exists {
 				msg := Message{
@@ -33,6 +33,7 @@ func (h *Hub) Run() {
 				regInfo.client.send <- msg
 				break
 			}
+
 			err := room.AddClient(regInfo.client)
 			if err != nil {
 				msg := Message{
@@ -42,7 +43,11 @@ func (h *Hub) Run() {
 				regInfo.client.send <- msg
 				break
 			}
+
 			regInfo.client.room = room
+			fmt.Printf("\n%s joined the %s room\n", regInfo.client.name, regInfo.client.room.name)
+			fmt.Println("Local Address: ", regInfo.client.conn.LocalAddr())
+			fmt.Println("Remote Adress: ", regInfo.client.conn.RemoteAddr())
 
 		case client := <-h.unregister:
 			if client.room != nil {
@@ -51,12 +56,17 @@ func (h *Hub) Run() {
 					Name:    "SERVER",
 					Content: fmt.Sprintf("%s has left the room", client.name),
 				}
+				close(client.send)
 				room.BroadcastMessage(msg)
 				room.RemoveClient(client.name)
+				fmt.Printf("\n%s left the %s room\n", client.name, client.room.name)
+
 			}
 		case message := <-h.broadcast:
 			room := h.rooms[message.RoomName]
 			room.BroadcastMessage(message)
+			fmt.Printf("\n%s sent a message in the %s room\n", message.Name, message.RoomName)
+			fmt.Println("Content: ", message.Content)
 		}
 	}
 
@@ -76,15 +86,4 @@ func NewHub() *Hub {
 		h.rooms[room] = NewRoom(room)
 	}
 	return h
-}
-
-func (h *Hub) ListRooms() []string {
-	h.roomsMutex.RLock()
-	defer h.roomsMutex.RUnlock()
-
-	names := make([]string, 0, len(h.rooms))
-	for room := range h.rooms {
-		names = append(names, room)
-	}
-	return names
 }
