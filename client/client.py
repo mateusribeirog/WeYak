@@ -11,7 +11,7 @@ e = threading.Event()
 sending_buffer = Queue()
 receiving_buffer = Queue()
 
-HOST = "192.168.15.70"
+HOST = "127.0.0.1"
 PORT = 8888
 app = GUI(sending_buffer,receiving_buffer) 
 

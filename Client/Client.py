@@ -51,7 +51,7 @@ def startup_sockets(HOST,PORT):
     else:
         print("Connection Failed")
         s.disconnect()
-        startup_sockets()
+        startup_sockets(HOST, PORT)
 
 
 def username():
