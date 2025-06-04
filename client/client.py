@@ -11,7 +11,7 @@ e = threading.Event()
 sending_buffer = Queue()
 receiving_buffer = Queue()
 
-HOST = "127.0.0.1"
+HOST = "192.168.15.70"
 PORT = 8888
 app = GUI(sending_buffer,receiving_buffer) 
 
@@ -51,7 +51,7 @@ def startup_sockets(HOST,PORT):
     else:
         print("Connection Failed")
         s.disconnect()
-        startup_sockets()
+        startup_sockets(HOST, PORT)
 
 
 def username():
