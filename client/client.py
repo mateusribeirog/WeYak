@@ -12,7 +12,7 @@ sending_buffer = Queue()
 receiving_buffer = Queue()
 
 HOST = "127.0.0.1"
-PORT = 12000
+PORT = 8888
 app = GUI(sending_buffer,receiving_buffer) 
 
 def Listen(socket,buffer):

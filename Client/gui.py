@@ -106,8 +106,8 @@ class GUI:
         self.Username_input.config(state='readonly')
 
     def sendMsg(self,event):
-        msg = "{}:{}\n".format(self.Username,self.input.get())
-        self.receiving_buff.put_nowait(msg)
+        msg = "{}\n".format(self.input.get())
+        #self.receiving_buff.put_nowait(msg)
         self.sending_buffer.put_nowait(msg)
         self.input.delete(0,'end')
         self.update_TextBox()
