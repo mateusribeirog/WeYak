@@ -44,6 +44,8 @@ def startup_sockets(HOST,PORT):
     conn.value = s.handle_connection()
     if conn.value == 0:
         print("Sucessfully connected")
+        s.send_message(app.Username.encode())
+        s.send_message(app.room.encode())
         threading.Thread(target=Listen, args=(s,receiving_buffer),daemon=True).start()
         threading.Thread(target=send, args=(s,sending_buffer),daemon=True).start()
     else:
@@ -52,7 +54,14 @@ def startup_sockets(HOST,PORT):
         startup_sockets()
 
 
-        
+def username():
+    while not e.is_set():
+        if app.Username != "" and app.room != "":
+            threading.Thread(target=startup_sockets,args=(HOST,PORT),daemon=True).start()
+            return
+        else:
+            time.sleep(0.01)
+
 
 
 def exiting():
@@ -60,7 +69,7 @@ def exiting():
     e.set()
     app.window.destroy()
 
-threading.Thread(target=startup_sockets,args=(HOST,PORT),daemon=True).start()
+threading.Thread(target=username,daemon=True).start()
     
 app.window.protocol("WM_DELETE_WINDOW",exiting)
 

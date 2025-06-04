@@ -7,6 +7,7 @@ class GUI:
         
         self.PAGE_NAMES = ["Games","Tech","General","Movies"]
         self.Username = ""
+        self.room = ""
         self.sending_buffer = sending_buff
         self.receiving_buff = receiving_buff
 
@@ -28,10 +29,11 @@ class GUI:
         self.buttons = []
 
         for i in range(4):
-            Button = tk.Button(text=self.PAGE_NAMES[i],width=1,height=1,relief=tk.RAISED,font=("Arial",14))
+            Button = tk.Button(text=self.PAGE_NAMES[i],width=1,height=1,relief=tk.RAISED,font=("Arial",14),command=eval(f"self.set_room_{self.PAGE_NAMES[i]}"))
             Button.grid(row=0,column=i+1,sticky="nsew")
             self.window.grid_columnconfigure(i+1,weight=1)
             self.buttons.append(Button)
+
 
         self.window.grid_rowconfigure(1,weight=6)
         self.window.grid_rowconfigure(2,weight=1)
@@ -53,7 +55,7 @@ class GUI:
         self.input_label.pack(side="top")
 
         #Configuração do input
-        self.input = tk.Entry(self.input_frame,width=1)
+        self.input = tk.Entry(self.input_frame,width=1,state="disabled")
         self.input.pack(fill=tk.X)
         self.input.bind("<Return>",self.sendMsg)
         self.window.grid_rowconfigure(2,weight=1)
@@ -86,8 +88,21 @@ class GUI:
         self.server_status = tk.Label(self.rightFrame,text="teste",font=("Arial",14))
         self.server_status.pack(pady=(100,0))
 
+    def set_room_General(self):
+        self.room = "General\n"
+        self.input.config(state="normal")
+    def set_room_Games(self):
+        self.room = "Games\n"
+        self.input.config(state="normal")
+    def set_room_Tech(self):
+        self.room = "General\n"
+        self.input.config(state="normal")
+    def set_room_Movies(self):
+        self.room = "General\n"
+        self.input.config(state="normal")
+
     def setUsername(self,event):
-        self.Username = self.Username_input.get()
+        self.Username = self.Username_input.get() + '!'
         self.Username_input.config(state='readonly')
 
     def sendMsg(self,event):
