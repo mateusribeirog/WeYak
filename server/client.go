@@ -82,18 +82,16 @@ func HandleConnection(conn net.Conn, h *Hub) {
 	defer client.Disconnect()
 
 	reader := bufio.NewReader(client.conn)
-	username, err := reader.ReadString('\n')
+	input, err := reader.ReadString('\n')
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	desiredroom, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	temp := strings.SplitN(input, "!", 2)
+	username := temp[0]
+	desiredroom := temp[1]
 
 	regRequest := &RegistrationInfo{
 		client:          client,
