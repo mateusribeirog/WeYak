@@ -91,15 +91,22 @@ class GUI:
     def set_room_General(self):
         self.room = "General\n"
         self.input.config(state="normal")
+        self.current_Room.configure(text="Current Room:\nGeneral")
+
     def set_room_Games(self):
         self.room = "Games\n"
         self.input.config(state="normal")
+        self.current_Room.configure(text="Current Room:\nGames")
     def set_room_Tech(self):
-        self.room = "General\n"
+        self.room = "Tech\n"
         self.input.config(state="normal")
+        self.current_Room.configure(text="Current Room:\nTech")
+
     def set_room_Movies(self):
-        self.room = "General\n"
+        self.room = "Movies\n"
         self.input.config(state="normal")
+        self.current_Room.configure(text="Current Room:\nMovies")
+
 
     def setUsername(self,event):
         self.Username = self.Username_input.get() + '!'
@@ -121,7 +128,7 @@ class GUI:
             print(f"size queue: {self.receiving_buff.qsize()}")
             try:
                 #self.Text.config(state="normal")
-                msg = f"{buffer[0]}: {buffer[1]}"
+                msg = f"{buffer[0]}:{buffer[1]}"
                 self.Text.insert('end',msg+'\n')
                 print(f"texto da textBox:{msg}")
                 self.Text.yview_moveto(1.0)
